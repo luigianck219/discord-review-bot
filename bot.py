@@ -5,7 +5,6 @@ import random
 import os
 from datetime import datetime
 
-# Legge il token e channel ID dalle variabili di Railway
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID"))
 
@@ -23,17 +22,20 @@ def load_reviews():
 def stars_to_emoji(n):
     return "⭐" * n + "☆" * (5 - n)
 
-def format_review(review):
+def build_embed(review):
     now = datetime.now()
-    date_str = now.strftime("%-d/%-m/%y, %-H:%M %p")
+    date_str = now.strftime("%#d/%#m/%y, %#I:%M %p") if os.name == "nt" else now.strftime("%-d/%-m/%y, %-I:%M %p")
     tag = review.get("tag", "00000")
-    lines = [
-        f"**{review['username']}**",
-        stars_to_emoji(review["stars"]),
-        review["text"],
-        f"`{tag} • {date_str}`"
-    ]
-    return "\n".join(lines)
+
+    embed = discord.Embed(
+        description=f"{stars_to_emoji(review['stars'])}\n{review['text']}\n\n`{tag} • {date_str}`",
+        color=0x2b2d31
+    )
+    embed.set_author(
+        name=review["username"],
+        icon_url="https://cdn.discordapp.com/embed/avatars/0.png"
+    )
+    return embed
 
 @client.event
 async def on_ready():
@@ -57,10 +59,10 @@ async def review_loop():
             random.shuffle(pool)
 
         review = pool.pop()
-        message = format_review(review)
+        embed = build_embed(review)
 
         try:
-            await channel.send(message)
+            await channel.send(embed=embed)
             print(f"📨 Recensione inviata: {review['username']}")
         except Exception as e:
             print(f"❌ Errore invio: {e}")
