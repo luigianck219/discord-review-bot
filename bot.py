@@ -24,17 +24,21 @@ def stars_to_emoji(n):
 
 def build_embed(review):
     now = datetime.now()
-    date_str = now.strftime("%#d/%#m/%y, %#I:%M %p") if os.name == "nt" else now.strftime("%-d/%-m/%y, %-I:%M %p")
+    date_str = now.strftime("%-d/%-m/%y, %-I:%M %p")
     tag = review.get("tag", "00000")
 
     embed = discord.Embed(
-        description=f"{stars_to_emoji(review['stars'])}\n{review['text']}\n\n`{tag} • {date_str}`",
-        color=0x2b2d31
+        color=0x9B59B6,  # viola
     )
-    embed.set_author(
-        name=review["username"],
-        icon_url="https://cdn.discordapp.com/embed/avatars/0.png"
+
+    embed.add_field(
+        name=f"**{review['username']}**",
+        value=f"{stars_to_emoji(review['stars'])}\n{review['text']}\n\n`{tag} • {date_str}`",
+        inline=False
     )
+
+    embed.set_footer(text="FNStock • Verified Review")
+
     return embed
 
 @client.event
