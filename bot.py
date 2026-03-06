@@ -9,8 +9,8 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID"))
 
 REVIEWS_FILE = "reviews.json"
-MIN_MINUTES = 30
-MAX_MINUTES = 50
+MIN_MINUTES = 240
+MAX_MINUTES = 480
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
